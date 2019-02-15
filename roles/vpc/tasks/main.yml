@@ -1,0 +1,30 @@
+---
+- name: Build Cloudformation template
+  template:
+    src: cfn_vpc.yml
+    dest: /tmp/cfn_vpc.yml
+  changed_when: False
+
+- name: Validate CloudFormation Template
+  cloudformation_validate:
+    region: "{{ common_aws_region }}"
+    template: /tmp/cfn_vpc.yml
+
+- name: Provision VPC Resource
+  cloudformation:
+    stack_name: "{{ vpc_stack_name }}"
+    state: "present"
+    region: "{{ common_aws_region }}"
+    disable_rollback: true
+    template: /tmp/cfn_vpc.yml
+    template_parameters:
+      CidrBlock: "{{ vpc_cidr_block }}"
+    tags:
+      Name: "{{ vpc_stack_name }}"
+      team: "{{ vpc_team }}"
+      environment: "{{ vpc_environment }}"
+  register: vpc_cfn_result
+
+- name: Display Cloudformation Output
+  debug:
+    msg: "{{ vpc_cfn_result }}"
