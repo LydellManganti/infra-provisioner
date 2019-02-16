@@ -1,4 +1,5 @@
 ---
 vpc_cidr_block: 10.0.0.0/16
+vpc_cidr_whitelist: 106.71.7.121/32
 vpc_stack_name: infra-poc
 vpc_team: cloud
