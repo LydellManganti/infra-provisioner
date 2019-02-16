@@ -21,7 +21,7 @@
 
     - name: Provision VPC Resource
       cloudformation:
-        stack_name: "{{ vpc_stack_name }}-vpc"
+        stack_name: "{{ vpc_stack_name }}-{{ vpc_team }}-vpc"
         state: present
         region: "{{ common_aws_region }}"
         disable_rollback: true

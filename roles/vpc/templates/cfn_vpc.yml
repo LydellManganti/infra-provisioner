@@ -55,7 +55,7 @@ Resources:
       GatewayId: !Ref InternetGateway
       RouteTableId: !Ref RouteTable
 
-  Subnet:
+  SubnetA:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: !Sub ${AWS::Region}a
@@ -64,7 +64,19 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: Name
-          Value: !Sub ${TeamName}-subnet
+          Value: !Sub ${TeamName}-subnet-a
+
+  SubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Sub ${AWS::Region}b
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${TeamName}-subnet-b
+
 
   NetworkAcl:
     Type: AWS::EC2::NetworkAcl
@@ -100,17 +112,29 @@ Resources:
         Code: "-1"
         Type: "-1"
 
-  SubnetNetworkAclAssociation:
+  SubnetNetworkAclAssociationA:
     Type: AWS::EC2::SubnetNetworkAclAssociation
     Properties:
-      SubnetId: !Ref Subnet
       NetworkAclId: !Ref NetworkAcl
+      SubnetId: !Ref SubnetA
 
-  SubnetRouteTableAssociation:
+  SubnetRouteTableAssociationA:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref RouteTable
-      SubnetId: !Ref Subnet
+      SubnetId: !Ref SubnetA
+
+  SubnetNetworkAclAssociationB:
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId: !Ref NetworkAcl
+      SubnetId: !Ref SubnetB
+
+  SubnetRouteTableAssociationA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RouteTable
+      SubnetId: !Ref SubnetA
 
   S3Endpoint:
     Type: "AWS::EC2::VPCEndpoint"
@@ -156,8 +180,20 @@ Outputs:
     Export:
       Name: !Sub "${TeamName}-s3-flow-logs"
 
-  ExternalSubnet:
-    Description: External Subnet
-    Value: !Ref Subnet
+  ExternalSubnetA:
+    Description: External Subnet A
+    Value: !Ref SubnetA
     Export:
-      Name: !Sub "${TeamName}-external-app-subnet"
+      Name: !Sub "${TeamName}-external-app-subnet-a"
+
+  ExternalSubnetB:
+    Description: External SubnetB
+    Value: !Ref SubnetB
+    Export:
+      Name: !Sub "${TeamName}-external-app-subnet-b"
+
+  VPCId:
+    Description: VPC ID
+    Value: !Ref VPC
+    Export:
+      Name: !Sub "${TeamName}-vpc-id"
