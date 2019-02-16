@@ -6,6 +6,9 @@ Parameters:
   CidrBlock:
     Description: The CIDR Range to be created
     Type: String
+  TeamName:
+    Description: The Team who owns this stack
+    Type: String
 
 Resources:
   VPC:
@@ -15,3 +18,53 @@ Resources:
       EnableDnsSupport: true
       EnableDnsHostnames: false
       InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: !Sub ${TeamName}-vpc
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${TeamName}-internet-gateway
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+
+  RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${TeamName}-route-table
+
+  Route:
+    Type: AWS::EC2::Route
+    DependsOn:
+      - InternetGateway
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+      RouteTableId: !Ref RouteTable
+
+  Subnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Sub ${AWS::Region}a
+      CidrBlock: 10.0.0.0/24
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${TeamName}-subnet
+
+  SubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref RouteTable
+      SubnetId: !Ref Subnet
