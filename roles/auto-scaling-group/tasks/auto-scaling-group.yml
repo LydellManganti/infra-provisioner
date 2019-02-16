@@ -1,0 +1,44 @@
+---
+- name: Build Resources using Cloudformation
+  block:
+    - name: Create Temporary Template folder
+      tempfile:
+        state: directory
+        suffix: -template
+      changed_when: false
+      register: template_temp_dir
+
+    - name: Build Cloudformatin template
+      template:
+        src: cfn_auto_scaling_group.yml
+        dest: "{{ template_temp_dir.path }}/cfn_auto_scaling_group.yml"
+      changed_when: false
+
+    - name: Validate Cloudformation template
+      cloudformation_validate:
+        region: "{{ common_aws_region }}"
+        template: "{{ template_temp_dir.path }}/cfn_auto_scaling_group.yml"
+
+    - name: Provision AutoScalingGroup Resources
+      cloudformation:
+        stack_name: "{{ auto_scaling_group_stack_name }}-{{ auto_scaling_group_team }}-auto-scaling-group"
+        state: present
+        region: "{{ common_aws_region }}"
+        disable_rollback: true
+        template: "{{ template_temp_dir.path }}/cfn_auto_scaling_group.yml"
+        tags:
+          Name: "{{ auto_scaling_group_stack_name }}"
+          team: "{{ auto_scaling_group_team }}"
+          environment: "{{ auto_scaling_group_environment }}"
+      register: auto_scaling_group_cfn_result
+
+    - name: Display Cloudformation Output
+      debug:
+        msg: "{{ auto_scaling_group_cfn_result }}"
+
+  always:
+    - name: Cleanup Temporary Template Folder
+      file:
+        path: "{{ template_temp_dir.path }}"
+        state: absent
+      changed_when: false

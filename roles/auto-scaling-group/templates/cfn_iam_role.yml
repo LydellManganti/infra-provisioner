@@ -1,0 +1,66 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Provision IAM for Instance Profile
+
+Parameters:
+  DomainName:
+    Description: The Domain Name where S3 assets are stored
+    Type: String
+  TeamName:
+    Description: The Team who owns this stack
+    Type: String
+
+Resources:
+  ApplicationIamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      Policies:
+        - PolicyName: cloudwatch-logs
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:DescribeLogGroups
+                  - logs:DescribeLogStream
+                  - logs:PutLogEvents
+                  - cloudwatch:PutMetricData
+                Resource:
+                  - "*"
+        - PolicyName: s3
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource:
+                  - !Sub arn:aws:s3:::${DomainName}/*
+
+  ApplicationInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+        - !Ref ApplicationIamRole
+      InstanceProfileName: !Sub ${TeamName}-instance-profile
+
+Outputs:
+  ApplicationInstanceProfile:
+    Description: Instance Profile of EC2
+    Value: !Ref ApplicationInstanceProfile
+    Export:
+      Name: !Sub ${TeamName}-instance-profile

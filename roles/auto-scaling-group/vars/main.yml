@@ -1,0 +1,4 @@
+---
+auto_scaling_group_environment: dev
+auto_scaling_group_stack_name: infra-poc
+auto_scaling_group_team: application
