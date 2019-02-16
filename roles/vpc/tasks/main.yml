@@ -1,31 +1,47 @@
 ---
-- name: Build Cloudformation template
-  template:
-    src: cfn_vpc.yml
-    dest: /tmp/cfn_vpc.yml
-  changed_when: False
+- name: Build Resources using Cloudformation
+  block:
+    - name: Create Temporary Template Folder
+      tempfile:
+        state: directory
+        suffix: -template
+      changed_when: false
+      register: template_temp_dir
 
-- name: Validate CloudFormation Template
-  cloudformation_validate:
-    region: "{{ common_aws_region }}"
-    template: /tmp/cfn_vpc.yml
+    - name: Build Cloudformation template
+      template:
+        src: cfn_vpc.yml
+        dest: "{{ template_temp_dir.path }}/cfn_vpc.yml"
+      changed_when: False
 
-- name: Provision VPC Resource
-  cloudformation:
-    stack_name: "{{ vpc_stack_name }}"
-    state: "present"
-    region: "{{ common_aws_region }}"
-    disable_rollback: true
-    template: /tmp/cfn_vpc.yml
-    template_parameters:
-      CidrBlock: "{{ vpc_cidr_block }}"
-      TeamName: "{{ vpc_team }}"
-    tags:
-      Name: "{{ vpc_stack_name }}"
-      team: "{{ vpc_team }}"
-      environment: "{{ vpc_environment }}"
-  register: vpc_cfn_result
+    - name: Validate CloudFormation template
+      cloudformation_validate:
+        region: "{{ common_aws_region }}"
+        template: "{{ template_temp_dir.path }}/cfn_vpc.yml"
 
-- name: Display Cloudformation Output
-  debug:
-    msg: "{{ vpc_cfn_result }}"
+    - name: Provision VPC Resource
+      cloudformation:
+        stack_name: "{{ vpc_stack_name }}-vpc"
+        state: present
+        region: "{{ common_aws_region }}"
+        disable_rollback: true
+        template: "{{ template_temp_dir.path }}/cfn_vpc.yml"
+        template_parameters:
+          CidrBlock: "{{ vpc_cidr_block }}"
+          TeamName: "{{ vpc_team }}"
+        tags:
+          Name: "{{ vpc_stack_name }}"
+          team: "{{ vpc_team }}"
+          environment: "{{ vpc_environment }}"
+      register: vpc_cfn_result
+
+    - name: Display Cloudformation Output
+      debug:
+        msg: "{{ vpc_cfn_result }}"
+
+  always:
+    - name: Cleanup Temporary Template Folder
+      file:
+        path: "{{ template_temp_dir.path }}"
+        state: absent
+      changed_when: false

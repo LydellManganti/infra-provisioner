@@ -86,3 +86,35 @@ Resources:
       ServiceName:
         !Sub com.amazonaws.${AWS::Region}.s3
       VpcId: !Ref VPC
+
+  S3BucketFlowLog:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      BucketName: !Sub vpc-flow-logs-${AWS::AccountId}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  VPCFlowLog:
+    Type: AWS::EC2::FlowLog
+    Properties:
+      LogDestination: !GetAtt S3BucketFlowLog.Arn
+      LogDestinationType: s3
+      ResourceId: !Ref VPC
+      ResourceType: VPC
+      TrafficType: ALL
+
+Outputs:
+  S3BucketFlowLog:
+    Description: The S3 Bucket holding vpc flow logs
+    Value: !Ref S3BucketFlowLog
+    Export:
+      Name: !Sub "${TeamName}-s3-flow-logs"
+  
+  ExternalSubnet:
+    Description: External Subnet
+    Value: !Ref Subnet
+    Export:
+      Name: !Sub "${TeamName}-external-app-subnet"
