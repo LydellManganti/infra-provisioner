@@ -27,8 +27,8 @@
         disable_rollback: true
         template: "{{ template_temp_dir.path }}/cfn_load_balancer.yml"
         template_parameters:
-          CidrBlock: "{{ load_balancer_cidr_block }}"
-          CidrWhitelist: "{{ load_balancer_cidr_whitelist }}"
+          CidrBlock: "{{ common_cidr_block }}"
+          CidrWhitelist: "{{ common_cidr_whitelist }}"
           TeamName: "{{ load_balancer_team }}"
         tags:
           Name: "{{ load_balancer_stack_name }}"
