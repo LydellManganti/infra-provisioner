@@ -164,6 +164,19 @@ Resources:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
 
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3BucketFlowLog
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:PutObject
+            Effect: Allow
+            Resource: !Sub "arn:aws:s3:::vpc-flow-logs-${AWS::AccountId}/*"
+            Principal:
+              AWS: "783225319266"
+
   VPCFlowLog:
     Type: AWS::EC2::FlowLog
     Properties:
