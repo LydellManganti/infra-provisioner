@@ -1,0 +1,73 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Provision VPC
+
+Parameters:
+  CidrBlock:
+    Description: The CIDR Range to be created
+    Type: String
+  CidrWhitelist:
+    Description: The external IP addresses allowed to access resources
+    Type: String
+  TeamName:
+    Description: The Team who owns this stack
+    Type: String
+
+Resources:
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${TeamName}-security-group
+      GroupDescription: Security Group to control access to the Load Balancer
+      VpcId: !ImportValue "cloud-vpc-id"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: !Ref CidrBlock
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: !Ref CidrWhitelist
+      Tags:
+        - Key: Name
+          Value: !Sub ${TeamName}-security-group
+
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub ${TeamName}-loadbalancer
+      Scheme: internet-facing
+      SecurityGroups:
+        - !Ref SecurityGroup
+      Subnets:
+        - !ImportValue "cloud-external-app-subnet-a"
+        - !ImportValue "cloud-external-app-subnet-b"
+      Type: application
+      LoadBalancerAttributes:
+        - Key: access_logs.s3.enabled
+          Value: true
+        - Key: access_logs.s3.bucket
+          Value: !ImportValue "cloud-s3-flow-logs"
+        - Key: access_logs.s3.prefix
+          Value: !Sub "${TeamName}/alb"
+
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckPath: /
+      HealthCheckPort: 80
+      Name: !Sub ${TeamName}-target-group
+      Port: 80
+      Protocol: HTTP
+      VpcId: !ImportValue "cloud-vpc-id"
+
+  Listener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: 80
+      Protocol: HTTP

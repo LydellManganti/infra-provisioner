@@ -1,0 +1,6 @@
+---
+load_balancer_cidr_block: 10.0.0.0/16
+load_balancer_cidr_whitelist: 106.71.7.121/32
+load_balancer_environment: dev
+load_balancer_stack_name: infra-poc
+load_balancer_team: operations
