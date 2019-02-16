@@ -21,7 +21,7 @@
 
     - name: Provision Application LoadBalancer Resources
       cloudformation:
-        stack_name: "{{ load_balancer_stack_name }}-{{ load_balancer_team }}-alb"
+        stack_name: "{{ load_balancer_stack_name }}-{{ load_balancer_team }}-app-loadbalancer"
         state: present
         region: "{{ common_aws_region }}"
         disable_rollback: true
