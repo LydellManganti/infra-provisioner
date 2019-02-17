@@ -1,0 +1,27 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Provision S3 Bucket for application
+
+Parameters:
+  DomainName:
+    Description: The Domain Name where S3 assets are stored
+    Type: String
+  TeamName:
+    Description: The Team who owns this stack
+    Type: String
+
+Resources:
+  S3BucketDomainResource:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      BucketName: !Ref DomainName
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+Outputs:
+  S3BucketName:
+    Description: The S3 Bucket name used to store Application resources
+    Value: !Ref S3BucketDomainResource

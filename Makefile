@@ -9,6 +9,10 @@ NC         := \033[0m # No Colour
 
 usage:
 	@printf "\n\n$(YELLOW)Usage:$(NC)\n\n"
+	@printf "$(GREEN)DEVELOPMENT$(NC)\n"
+	@printf "$(GREEN)==================================================================$(NC)\n"
+	@printf "$(YELLOW)make virtual-env   $(GREEN)# Install python modules in Virtual Environment\n"
+	@printf "\n\n"
 	@printf "$(GREEN)TESTING$(NC)\n"
 	@printf "$(GREEN)==================================================================$(NC)\n"
 	@printf "$(YELLOW)make check-syntax  $(GREEN)# Run syntax-check for this project\n"
@@ -23,20 +27,33 @@ usage:
 	@printf "                   $(GREEN)  (vpc, loadbalancer, autoscaling, s3, and rds)$(NC)\n"
 	@printf "\n\n"
 
-check-syntax:
-	ansible-playbook -i inventory/local --syntax-check playbook-all.yml --check -vvv
-	@printf "$(CYAN)check-syntax Successful!\n"
+virtual-env:
+    virtualenv --python=/usr/bin/python venv; \
+    source venv/bin/activate; \
+		pip install -r requirements.txt; \
 
-lint:
-	# Exclude galaxy_info rule because roles are not galaxy roles
-	ansible-lint -x 701 playbook-all.yml
-	@printf "$(CYAN)Lint Successful!\n"
+check-syntax:
+	source venv/bin/activate; \
+	ansible-playbook -i inventory/local --syntax-check playbook-all.yml --check -vvv;
+	@printf "\n$(CYAN)check-syntax Successful!\n\n"
+
+lint: virtual-env
+	source venv/bin/activate; \
+	ansible-lint -x 701 playbook-all.yml;
+	@printf "\n$(CYAN)Lint Successful!\n\n"
 
 vpc:
-	ansible-playbook -i inventory/local playbook-vpc.yml -vvv
+	source venv/bin/activate; \
+	ansible-playbook -i inventory/local playbook-vpc.yml -vvv;
+
+s3:
+	source venv/bin/activate; \
+  ansible-playbook -i inventory/local playbook-s3.yml -vvv;
 
 load-balancer:
-	ansible-playbook -i inventory/local playbook-load-balancer.yml -vvv
+	source venv/bin/activate; \
+	ansible-playbook -i inventory/local playbook-load-balancer.yml -vvv;
 
 auto-scaling:
-	ansible-playbook -i inventory/local playbook-auto-scaling-group.yml -vvv
+	source venv/bin/activate; \
+	ansible-playbook -i inventory/local playbook-auto-scaling-group.yml -vvv;

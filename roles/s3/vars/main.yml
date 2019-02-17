@@ -1,0 +1,4 @@
+---
+s3_environment: dev
+s3_stack_name: infra-poc
+s3_team: media

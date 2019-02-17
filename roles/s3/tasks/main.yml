@@ -1,0 +1,47 @@
+---
+- name: Build Resources using Cloudformation
+  block:
+    - name: Create Temporary Template folder
+      tempfile:
+        state: directory
+        suffix: -template
+      changed_when: false
+      register: template_temp_dir
+
+    - name: Build Cloudformation template
+      template:
+        src: cfn_s3.yml
+        dest: "{{ template_temp_dir.path }}/cfn_s3.yml"
+      changed_when: false
+
+    - name: Validate Cloudformation template
+      cloudformation_validate:
+        region: "{{ common_aws_region }}"
+        template: "{{ template_temp_dir.path }}/cfn_s3.yml"
+
+    - name: Provision Application S3 Bucket Resource
+      cloudformation:
+        stack_name: "{{ s3_stack_name }}-{{ s3_team }}-s3"
+        state: present
+        region: "{{ common_aws_region }}"
+        disable_rollback: true
+        template: "{{ template_temp_dir.path }}/cfn_s3.yml"
+        template_parameters:
+          DomainName: "{{ common_domain_name }}"
+          TeamName: "{{ s3_team }}"
+        tags:
+          Name: "{{ s3_stack_name }}"
+          team: "{{ s3_team }}"
+          environment: "{{ s3_environment }}"
+      register: s3_cfn_result
+
+    - name: Display Cloudformation Output
+      debug:
+        msg: "{{ s3_cfn_result }}"
+
+  always:
+    - name: Cleanup Temporary Template Folder
+      file:
+        path: "{{ template_temp_dir.path }}"
+        state: absent
+      changed_when: false
