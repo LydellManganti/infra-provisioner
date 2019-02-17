@@ -21,7 +21,7 @@
 
     - name: Provision AutoScalingGroup Resources
       cloudformation:
-        stack_name: "{{ auto_scaling_group_stack_name }}-{{ auto_scaling_group_team }}-auto-scaling-group"
+        stack_name: "{{ auto_scaling_group_stack_name }}-{{ auto_scaling_group_team }}-auto-scaling-group-iam"
         state: present
         region: "{{ common_aws_region }}"
         disable_rollback: true

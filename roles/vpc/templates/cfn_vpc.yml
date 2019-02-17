@@ -127,11 +127,11 @@ Resources:
       NetworkAclId: !Ref NetworkAcl
       SubnetId: !Ref SubnetB
 
-  SubnetRouteTableAssociationA:
+  SubnetRouteTableAssociationB:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId: !Ref RouteTable
-      SubnetId: !Ref SubnetA
+      SubnetId: !Ref SubnetB
 
   S3Endpoint:
     Type: "AWS::EC2::VPCEndpoint"

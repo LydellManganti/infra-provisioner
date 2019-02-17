@@ -26,6 +26,13 @@
         region: "{{ common_aws_region }}"
         disable_rollback: true
         template: "{{ template_temp_dir.path }}/cfn_auto_scaling_group.yml"
+        template_parameters:
+          CidrWhitelist: "{{ common_cidr_whitelist }}"
+          ImageId: "{{ auto_scaling_group_image_id }}"
+          InstanceType: "{{ auto_scaling_group_instance_type }}"
+          KeyName: "{{ auto_scaling_group_team }}-ec2-key-pair"
+          Port: "{{ common_application_port }}"
+          TeamName: "{{ auto_scaling_group_team }}"
         tags:
           Name: "{{ auto_scaling_group_stack_name }}"
           team: "{{ auto_scaling_group_team }}"

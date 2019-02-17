@@ -1,4 +1,6 @@
 ---
 auto_scaling_group_environment: dev
+auto_scaling_group_image_id: ami-0c9d48b5db609ad6e
+auto_scaling_group_instance_type: t2.micro
 auto_scaling_group_stack_name: infra-poc
 auto_scaling_group_team: application

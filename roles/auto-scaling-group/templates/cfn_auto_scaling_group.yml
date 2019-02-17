@@ -4,8 +4,8 @@ Description: Provision Auto Scaling Resources
 
 Parameters:
   CidrWhitelist:
-    Description:
-    Type:
+    Description: The external IP addresses allowed to access resources
+    Type: String
   ImageId:
     Description: AMI for EC2 instance
     Type: String
@@ -14,7 +14,7 @@ Parameters:
     Type: String
   KeyName:
     Description: PrivateKey for EC2 instance
-    Type: "AWS::SSM::Parameter::Value<AWS::EC2::KeyPair::KeyName>"
+    Type: AWS::EC2::KeyPair::KeyName
   Port:
     Description: Port Number
     Type: String
@@ -30,11 +30,16 @@ Resources:
       GroupDescription: Security Group to control EC2 traffic
       VpcId: !ImportValue "cloud-vpc-id"
       SecurityGroupIngress:
-        - SourceSecurityIngress: !ImportValue "cloud-load-balancer-security-group"
+        - SourceSecurityGroupId: !ImportValue "operations-load-balancer-security-group"
           IpProtocol: tcp
           FromPort: !Ref Port
           ToPort: !Ref Port
           Description: Load Balancer Access
+        - CidrIp: !Ref CidrWhitelist
+          IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          Description: app connection
         - CidrIp: !Ref CidrWhitelist
           IpProtocol: tcp
           FromPort: 22
@@ -44,7 +49,7 @@ Resources:
         - Key: Name
           Value: !Sub ${TeamName}-app-security-group
 
-  LaunchConfig:
+  LaunchConfiguration:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
       IamInstanceProfile:
@@ -52,3 +57,33 @@ Resources:
       ImageId: !Ref ImageId
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyName
+      SecurityGroups:
+        - !Ref ApplicationSecurityGroup
+      UserData:
+        Fn::Base64: !Sub |
+            #!/bin/bash
+            yum update -y
+            yum install -y httpd
+            systemctl start httpd
+            systemctl enable httpd
+
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    UpdatePolicy:
+      AutoScalingRollingUpdate:
+        MinInstancesInService: 1
+        MaxBatchSize: 1
+        PauseTime: PT30S
+    Properties:
+      VPCZoneIdentifier:
+        - !ImportValue "cloud-external-app-subnet-a"
+        - !ImportValue "cloud-external-app-subnet-b"
+      Cooldown: 300
+      LaunchConfigurationName: !Ref LaunchConfiguration
+      DesiredCapacity: 1
+      MinSize: 1
+      MaxSize: 2
+      TargetGroupARNs:
+        - !ImportValue "operations-target-group"
+      HealthCheckGracePeriod: 600
+      HealthCheckType: ELB

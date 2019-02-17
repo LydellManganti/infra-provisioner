@@ -49,6 +49,30 @@ Resources:
                   - s3:PutObject
                 Resource:
                   - !Sub arn:aws:s3:::${DomainName}/*
+        - PolicyName: session-manager
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:*
+                  - ssmmessages:CreateControlChannel
+                  - ssmmessages:CreateDataChannel
+                  - ssmmessages:OpenControlChannel
+                  - ssmmessages:OpenDataChannel
+                  - s3:GetEncryptionConfiguration
+                  - ec2:describeInstances
+                  - ec2:DescribeTags
+                  - ec2messages:AcknowledgeMessage
+                  - ec2messages:DeleteMessage
+                  - ec2messages:FailMessage
+                  - ec2messages:GetEndpoint
+                  - ec2messages:GetMessages
+                  - ec2messages:SendReply
+                  - iam:PassRole
+                  - iam:ListRoles
+                Resource:
+                  - "*"
 
   ApplicationInstanceProfile:
     Type: AWS::IAM::InstanceProfile
