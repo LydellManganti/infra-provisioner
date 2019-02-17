@@ -1,0 +1,13 @@
+---
+- name: Generate Key Pair for EC2 instance
+  ec2_key:
+    name: "{{ auto_scaling_group_team }}-ec2-key-pair"
+  no_log: true
+  register: auto_scaling_group_ec2_key_result
+
+- name: Store Private Key in ssm Parameter Store
+  aws_ssm_parameter_store:
+    name: "{{ auto_scaling_group_team }}-ec2-key-pair"
+    description: Private Key for "{{ auto_scaling_group_team }} ec2 instance"
+    value: "{{ auto_scaling_group_ec2_key_result['key']['private_key'] }}"
+  when: auto_scaling_group_ec2_key_result['key']['private_key'] is defined

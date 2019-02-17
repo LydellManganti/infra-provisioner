@@ -1,0 +1,54 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Provision Auto Scaling Resources
+
+Parameters:
+  CidrWhitelist:
+    Description:
+    Type:
+  ImageId:
+    Description: AMI for EC2 instance
+    Type: String
+  InstanceType:
+    Description: Instance Type for EC2 instance
+    Type: String
+  KeyName:
+    Description: PrivateKey for EC2 instance
+    Type: "AWS::SSM::Parameter::Value<AWS::EC2::KeyPair::KeyName>"
+  Port:
+    Description: Port Number
+    Type: String
+  TeamName:
+    Description: The Team who owns this stack
+    Type: String
+
+Resources:
+  ApplicationSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${TeamName}-app-security-group
+      GroupDescription: Security Group to control EC2 traffic
+      VpcId: !ImportValue "cloud-vpc-id"
+      SecurityGroupIngress:
+        - SourceSecurityIngress: !ImportValue "cloud-load-balancer-security-group"
+          IpProtocol: tcp
+          FromPort: !Ref Port
+          ToPort: !Ref Port
+          Description: Load Balancer Access
+        - CidrIp: !Ref CidrWhitelist
+          IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          Description: ssh connection
+      Tags:
+        - Key: Name
+          Value: !Sub ${TeamName}-app-security-group
+
+  LaunchConfig:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      IamInstanceProfile:
+        Fn::ImportValue: !Sub ${TeamName}-instance-profile
+      ImageId: !Ref ImageId
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
