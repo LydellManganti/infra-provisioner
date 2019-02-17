@@ -28,7 +28,6 @@
         template: "{{ template_temp_dir.path }}/cfn_vpc.yml"
         template_parameters:
           CidrBlock: "{{ common_cidr_block }}"
-          CidrWhitelist: "{{ common_cidr_whitelist }}"
           TeamName: "{{ vpc_team }}"
         tags:
           Name: "{{ vpc_stack_name }}"

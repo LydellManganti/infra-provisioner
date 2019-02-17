@@ -6,9 +6,6 @@ Parameters:
   CidrBlock:
     Description: The CIDR Range to be created
     Type: String
-  CidrWhitelist:
-    Description: The external IP addresses allowed to access resources
-    Type: String
   TeamName:
     Description: The Team who owns this stack
     Type: String
@@ -94,7 +91,7 @@ Resources:
       Protocol: "-1"
       RuleAction: allow
       Egress: false
-      CidrBlock: !Ref CidrWhitelist
+      CidrBlock: 0.0.0.0/0
       Icmp:
         Code: "-1"
         Type: "-1"
@@ -107,7 +104,7 @@ Resources:
       Protocol: "-1"
       RuleAction: allow
       Egress: true
-      CidrBlock: !Ref CidrWhitelist
+      CidrBlock: 0.0.0.0/0
       Icmp:
         Code: "-1"
         Type: "-1"
