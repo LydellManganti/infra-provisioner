@@ -71,3 +71,16 @@ Resources:
       LoadBalancerArn: !Ref ApplicationLoadBalancer
       Port: 80
       Protocol: HTTP
+
+Outputs:
+  LoadBalancerSecurityGroup:
+    Description: Load Balancer Security Group
+    Value: !Ref SecurityGroup
+    Export:
+      Name: !Sub ${TeamName}-load-balancer-security-group
+
+  TargetGroup:
+    Description: Target Group arn
+    Value: !Ref TargetGroup
+    Export:
+      Name: !Sub ${TeamName}-target-group
