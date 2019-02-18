@@ -11,20 +11,22 @@ usage:
 	@printf "\n\n$(YELLOW)Usage:$(NC)\n\n"
 	@printf "$(GREEN)DEVELOPMENT$(NC)\n"
 	@printf "$(GREEN)==================================================================$(NC)\n"
-	@printf "$(YELLOW)make virtual-env   $(GREEN)# Install python modules in Virtual Environment\n"
+	@printf "$(YELLOW)make virtual-env    $(GREEN)# Install python modules in Virtual Environment\n"
 	@printf "\n\n"
 	@printf "$(GREEN)TESTING$(NC)\n"
 	@printf "$(GREEN)==================================================================$(NC)\n"
-	@printf "$(YELLOW)make check-syntax  $(GREEN)# Run syntax-check for this project\n"
-	@printf "$(YELLOW)make lint          $(GREEN)# Run ansible-lint for this project\n"
+	@printf "$(YELLOW)make check-syntax   $(GREEN)# Run syntax-check for this project\n"
+	@printf "$(YELLOW)make lint           $(GREEN)# Run ansible-lint for this project\n"
 	@printf "\n\n"
 	@printf "$(GREEN)DEPLOYMENTS $(NC)\n"
 	@printf "$(GREEN)==================================================================$(NC)\n"
-	@printf "$(YELLOW)make vpc           $(GREEN)# Provision VPC Resources with InternetGateway $(NC)\n"
-	@printf "$(YELLOW)make load-balancer $(GREEN)# Provision Application LoadBalancer $(NC)\n"
-	@printf "$(YELLOW)make auto-scaling  $(GREEN)# Provision AutoScalingGroup $(NC)\n"
-	@printf "$(YELLOW)make all           $(GREEN)# Provision all Resources\n"
-	@printf "                   $(GREEN)  (vpc, loadbalancer, autoscaling, s3, and rds)$(NC)\n"
+	@printf "$(YELLOW)make vpc            $(GREEN)# Provision VPC Resources with InternetGateway $(NC)\n"
+	@printf "$(YELLOW)make s3             $(GREEN)# Provision S3 Bucket Resource used by Application $(NC)\n"
+	@printf "$(YELLOW)make load-balancer  $(GREEN)# Provision Application LoadBalancer $(NC)\n"
+	@printf "$(YELLOW)make auto-scaling   $(GREEN)# Provision AutoScalingGroup $(NC)\n"
+	@printf "$(YELLOW)make rds-postgresql $(GREEN)# Provision RDS PostgresQL $(NC)\n"
+	@printf "$(YELLOW)make all            $(GREEN)# Provision all Resources\n"
+	@printf "                    $(GREEN)  (vpc, loadbalancer, autoscaling, s3, and rds)$(NC)\n"
 	@printf "\n\n"
 
 virtual-env:
@@ -57,3 +59,7 @@ load-balancer:
 auto-scaling:
 	source venv/bin/activate; \
 	ansible-playbook -i inventory/local playbook-auto-scaling-group.yml -vvv;
+
+rds-postgresql:
+	source venv/bin/activate; \
+	ansible-playbook - inventory/local playbook-rds-postgresql.yml -vvv;

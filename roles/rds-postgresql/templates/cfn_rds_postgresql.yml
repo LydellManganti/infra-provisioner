@@ -1,0 +1,14 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Provision RDS PostgresQL
+
+Parameters:
+  TeamName:
+    Description: The Team who owns this stack
+    Type: String
+
+Resources:
+  PostgreSQL:
+    Type: AWS::RDS::
+
+Outputs:

@@ -2,8 +2,11 @@
 This project provisions an AWS infrastructure that accepts traffic from the internet (which are whitelisted), routes to an Application Load Balancer, which is attached to an AutoScalingGroup.
 The EC2 instance will hold the service that has permission to get and put object to an S3 Bucket. The EC2 instance will have permission to read and push data to RDS PostgreSQL.
 
-# Pre-requisites to run this installer
+# Quick Start
+Run `make` at the base folder. This will display Makefile targets that can be executed.
 
+
+# Machine Setup
 ## Tools
 ### Python 2.7
 ### VirtualEnv
@@ -21,7 +24,8 @@ R53
 VPC
   - Internet Gateway
   - S3 Endpoint
-  - Subnet
+  - Public Subnet for Application
+  - Private Subnet for RDS to block external access
   - Route Table
 
 LoadBalancer
@@ -31,16 +35,30 @@ LoadBalancer
 EC2
   - AutoScalingGroup
   - EC2 Instance
+  - IAM Role for Instance Profile
 
 RDS
   - PostgreSQL
 
+# Design Decisions
+- S3 Endpoint
+- Public/Private Subnets
+- VPC Flowlogs
+- S3 AccessLogs
+- S3 Encryption
+- RDS Encryption
+- SecurityGroup - Least privilege
+- Cloudwatch
+- CloudTrail
+- R53
+
 # Makefile
-## Lint
-## Test
-## make provision-vpc
-## make provision-alb
-## make provision-asg
+## make virtual-env
+## make check-syntax
+## make lint
+## make vpc
+## make load-balancer
+## make auto-scaling
 ## make provision-s3
 ## make provision-rds
 ## make provision-r53
@@ -52,7 +70,7 @@ Route 53 - This service is chosen to allow traffic
 - R53
 - AppliationLoadBalancer
 - AutoScalingGroup
-- RDS Multi AZ
+- RDS
 
 # Security Decisions Implemented as part of automation
 - CloudTrail

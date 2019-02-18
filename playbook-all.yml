@@ -4,5 +4,7 @@
 
   roles:
     - role: vpc
+    - role: s3
     - role: load-balancer
     - role: auto-scaling-group
+    - role: rds-postgresql

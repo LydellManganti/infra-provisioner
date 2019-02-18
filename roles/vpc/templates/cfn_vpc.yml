@@ -74,6 +74,41 @@ Resources:
         - Key: Name
           Value: !Sub ${TeamName}-subnet-b
 
+  InternalRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${TeamName}-internal-route-table
+
+  InternalRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: 10.0.0.0/16
+      RouteTableId: !Ref RouteTable
+
+  InternalSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Sub ${AWS::Region}a
+      CidrBlock: 10.0.2.0/24
+      MapPublicIpOnLaunch: false
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${TeamName}-internal-subnet-a
+
+  InternalSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Sub ${AWS::Region}b
+      CidrBlock: 10.0.3.0/24
+      MapPublicIpOnLaunch: false
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${TeamName}-internal-subnet-b
 
   NetworkAcl:
     Type: AWS::EC2::NetworkAcl
@@ -132,6 +167,30 @@ Resources:
     Properties:
       RouteTableId: !Ref RouteTable
       SubnetId: !Ref SubnetB
+
+  InternalSubnetNetworkAclAssociationA:
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId: !Ref NetworkAcl
+      SubnetId: !Ref InternalSubnetA
+
+  InternalSubnetRouteTableAssociationA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref InternalRouteTable
+      SubnetId: !Ref InternalSubnetA
+
+  InternalSubnetNetworkAclAssociationB:
+    Type: AWS::EC2::SubnetNetworkAclAssociation
+    Properties:
+      NetworkAclId: !Ref NetworkAcl
+      SubnetId: !Ref InternalSubnetB
+
+  InternalSubnetRouteTableAssociationB:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref InternalRouteTable
+      SubnetId: !Ref InternalSubnetB
 
   S3Endpoint:
     Type: "AWS::EC2::VPCEndpoint"
@@ -201,6 +260,18 @@ Outputs:
     Value: !Ref SubnetB
     Export:
       Name: !Sub "${TeamName}-external-app-subnet-b"
+
+  InternalSubnetA:
+    Description: Internal Subnet A
+    Value: !Ref InternalSubnetA
+    Export:
+      Name: !Sub "${TeamName}-internal-app-subnet-a"
+
+  InternalSubnetB:
+    Description: Internal SubnetB
+    Value: !Ref InternalSubnetB
+    Export:
+      Name: !Sub "${TeamName}-internal-app-subnet-b"
 
   VPCId:
     Description: VPC ID

@@ -1,0 +1,4 @@
+---
+rds_postgresql_environment: dev
+rds_postgresql_stack_name: infra-poc
+rds_postgresql_team: database
