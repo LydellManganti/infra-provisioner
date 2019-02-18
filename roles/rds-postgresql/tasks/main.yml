@@ -21,13 +21,15 @@
 
     - name: Provision RDS PostgresQL Resource
       cloudformation:
-        stack_name: "{{ rds_postgresql_stack_name }}-{{ rds_postgresql_team }}-s3"
+        stack_name: "{{ rds_postgresql_stack_name }}-{{ rds_postgresql_team }}-rds-postgresql"
         state: present
         region: "{{ common_aws_region }}"
         disable_rollback: true
         template: "{{ template_temp_dir.path }}/cfn_rds_postgresql.yml"
         template_parameters:
-          DomainName: "{{ common_domain_name }}"
+          CidrBlock: "{{ common_cidr_block }}"
+          DBName: "{{ rds_postgresql_db_name }}"
+          DBUserName: "{{ rds_postgresql_db_username }}"
           TeamName: "{{ rds_postgresql_team }}"
         tags:
           Name: "{{ rds_postgresql_stack_name }}"

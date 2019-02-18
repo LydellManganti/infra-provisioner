@@ -82,12 +82,6 @@ Resources:
         - Key: Name
           Value: !Sub ${TeamName}-internal-route-table
 
-  InternalRoute:
-    Type: AWS::EC2::Route
-    Properties:
-      DestinationCidrBlock: 10.0.0.0/16
-      RouteTableId: !Ref RouteTable
-
   InternalSubnetA:
     Type: AWS::EC2::Subnet
     Properties:

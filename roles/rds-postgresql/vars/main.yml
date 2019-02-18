@@ -1,4 +1,6 @@
 ---
+rds_postgresql_db_name: dbapp
+rds_postgresql_db_username: dbadmin
 rds_postgresql_environment: dev
 rds_postgresql_stack_name: infra-poc
 rds_postgresql_team: database

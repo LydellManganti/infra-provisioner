@@ -26,20 +26,19 @@ usage:
 	@printf "$(YELLOW)make auto-scaling   $(GREEN)# Provision AutoScalingGroup $(NC)\n"
 	@printf "$(YELLOW)make rds-postgresql $(GREEN)# Provision RDS PostgresQL $(NC)\n"
 	@printf "$(YELLOW)make all            $(GREEN)# Provision all Resources\n"
-	@printf "                    $(GREEN)  (vpc, loadbalancer, autoscaling, s3, and rds)$(NC)\n"
 	@printf "\n\n"
 
 virtual-env:
-    virtualenv --python=/usr/bin/python venv; \
+		virtualenv --python=/usr/bin/python venv; \
     source venv/bin/activate; \
-		pip install -r requirements.txt; \
+		pip install -r requirements.txt;
 
 check-syntax:
 	source venv/bin/activate; \
 	ansible-playbook -i inventory/local --syntax-check playbook-all.yml --check -vvv;
 	@printf "\n$(CYAN)check-syntax Successful!\n\n"
 
-lint: virtual-env
+lint:
 	source venv/bin/activate; \
 	ansible-lint -x 701 playbook-all.yml;
 	@printf "\n$(CYAN)Lint Successful!\n\n"
@@ -62,4 +61,8 @@ auto-scaling:
 
 rds-postgresql:
 	source venv/bin/activate; \
-	ansible-playbook - inventory/local playbook-rds-postgresql.yml -vvv;
+	ansible-playbook -i inventory/local playbook-rds-postgresql.yml -vvv;
+
+all:
+	source venv/bin/activate; \
+	ansible-playbook -i inventory/local playbook-all.yml -vvv;

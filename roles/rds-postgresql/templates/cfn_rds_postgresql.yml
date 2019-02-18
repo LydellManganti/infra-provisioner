@@ -3,12 +3,62 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: Provision RDS PostgresQL
 
 Parameters:
+  CidrBlock:
+    Description: The CIDR Range to be created
+    Type: String
+  DBName:
+    Description: Database name
+    Type: String
+  DBUserName:
+    Description: Database User name
+    Type: String
+  DBUserPassword:
+    Description: Database password
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: database-postgresql-password
+  MultiAZ:
+    Description: Desploy as MultiAZ
+    Type: String
+    Default: false
+    AllowedValues: [true, false]
   TeamName:
     Description: The Team who owns this stack
     Type: String
 
 Resources:
-  PostgreSQL:
-    Type: AWS::RDS::
+  DBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Web Application access
+      VpcId: !ImportValue "cloud-vpc-id"
+      SecurityGroupIngress:
+        - SourceSecurityGroupId: !ImportValue "application-security-group"
+          Description: Web Application SecurityGroup
+          IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
 
-Outputs:
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: DB Private Subnet
+      SubnetIds:
+        - !ImportValue cloud-internal-app-subnet-a
+        - !ImportValue cloud-internal-app-subnet-b
+
+  PostgreSQLDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: 5
+      DBInstanceClass: db.t2.micro
+      DBName: !Ref DBName
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      Engine: postgres
+      EngineVersion: '10.6'
+      MasterUsername: !Ref DBUserName
+      MasterUserPassword: !Ref DBUserPassword
+      MultiAZ: !Ref MultiAZ
+      PreferredBackupWindow: '14:00-14:30'
+      PreferredMaintenanceWindow: 'sat:12:00-sat:12:30'
+      VPCSecurityGroups:
+        - !Ref DBSecurityGroup

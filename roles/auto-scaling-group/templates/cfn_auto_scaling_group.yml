@@ -87,3 +87,10 @@ Resources:
         - !ImportValue "operations-target-group"
       HealthCheckGracePeriod: 600
       HealthCheckType: EC2
+
+Outputs:
+  ApplicationSecurityGroup:
+    Description: The security group of the application ec2 instances
+    Value: !Ref ApplicationSecurityGroup
+    Export:
+      Name: !Sub ${TeamName}-security-group
