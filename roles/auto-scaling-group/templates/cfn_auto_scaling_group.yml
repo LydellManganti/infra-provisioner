@@ -86,4 +86,4 @@ Resources:
       TargetGroupARNs:
         - !ImportValue "operations-target-group"
       HealthCheckGracePeriod: 600
-      HealthCheckType: ELB
+      HealthCheckType: EC2
