@@ -9,7 +9,7 @@ Parameters:
 
 Resources:
   R53DNS:
-    Type: AWS::R53::RecordSetGroup
+    Type: AWS::Route53::RecordSetGroup
     Properties:
       HostedZoneName: "{{ r53_hosted_zone_name }}"
       Comment: Hosted Zone "{{ r53_hosted_zone_name }}"
@@ -17,5 +17,5 @@ Resources:
         - Name: "{{ common_domain_name }}"
           Type: A
           AliasTarget:
-            HostedZoneId: !ImportValue "operations-canonical-host-zone-name-id"
+            HostedZoneId: !ImportValue "operations-canonical-host-zone-id"
             DNSName: !ImportValue "operations-load-balancer-dns-name"

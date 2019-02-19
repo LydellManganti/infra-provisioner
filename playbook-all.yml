@@ -8,3 +8,4 @@
     - role: load-balancer
     - role: auto-scaling-group
     - role: rds-postgresql
+    - role: r53

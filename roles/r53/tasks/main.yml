@@ -21,7 +21,7 @@
 
     - name: Provision R53 RecordSet
       cloudformation:
-        stack_name: "{{ r53_stack_name }}-{{ r53_team }}-rds-postgresql"
+        stack_name: "{{ r53_stack_name }}-{{ r53_team }}-route53"
         state: present
         region: "{{ common_aws_region }}"
         disable_rollback: true

@@ -73,17 +73,17 @@ Resources:
       Protocol: HTTP
 
 Outputs:
-  LoadBalancerCanonicalName:
-    Description: Load Balancer Canonical Hosted Zone Name ID
-    Value: !GetAtt ApplicationLoadBalancer.CanonicalHostedZoneNameID
+  LoadBalancerCanonicalZoneID:
+    Description: Load Balancer Canonical Hosted Zone ID
+    Value: !GetAtt ApplicationLoadBalancer.CanonicalHostedZoneID
     Export:
-      Name: !Sub {TeamName}-canonical-host-zone-name-id
+      Name: !Sub ${TeamName}-canonical-host-zone-id
 
   LoadBalancerDNSName:
     Description: Load Balancer DNS Name
     Value: !GetAtt ApplicationLoadBalancer.DNSName
     Export:
-      Name: !Sub "{TeamName}-load-balancer-dns-name"
+      Name: !Sub ${TeamName}-load-balancer-dns-name
 
   LoadBalancerSecurityGroup:
     Description: Load Balancer Security Group

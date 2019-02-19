@@ -64,6 +64,10 @@ rds-postgresql:
 	source venv/bin/activate; \
 	ansible-playbook -i inventory/local playbook-rds-postgresql.yml -vvv;
 
+r53:
+	source venv/bin/activate; \
+	ansible-playbook -i inventorylocal playbook-r53.yml -vvv;
+
 all:
 	source venv/bin/activate; \
 	ansible-playbook -i inventory/local playbook-all.yml -vvv;
