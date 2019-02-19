@@ -35,8 +35,8 @@ Run `make` at the base folder. This will display Makefile targets that can be ex
 
 # Tools Used
 The below tools are used for this project
-- Ansible - Used to orchestrate resource deployment.
-- Python - Used to create Ansible custom module, eg. `cloudformation_validate` that is not available out of the box.
+- Ansible - Used to orchestrate resource deployment. Easy to understand using yaml file. Does not require agent to be deployed.
+- Python - Used to create Ansible custom module, eg. `cloudformation_validate` that is not available out of the box. Allow usage of virtualenv to isolate an environment.
 - make - Used to simplify Ansible tasks into single command.
 - Cloudformation - Used to create resources in aws. This allow drift detection and dependency of resources.
 
