@@ -1,0 +1,46 @@
+---
+- name: Build Resources using Cloudformation
+  block:
+    - name: Create Temporary Template folder
+      tempfile:
+        state: directory
+        suffix: -template
+      changed_when: false
+      register: template_temp_dir
+
+    - name: Build Cloudformation template
+      template:
+        src: cfn_r53.yml
+        dest: "{{ template_temp_dir.path }}/cfn_r53.yml"
+      changed_when: false
+
+    - name: Validate Cloudformation template
+      cloudformation_validate:
+        region: "{{ common_aws_region }}"
+        template: "{{ template_temp_dir.path }}/cfn_r53.yml"
+
+    - name: Provision R53 RecordSet
+      cloudformation:
+        stack_name: "{{ r53_stack_name }}-{{ r53_team }}-rds-postgresql"
+        state: present
+        region: "{{ common_aws_region }}"
+        disable_rollback: true
+        template: "{{ template_temp_dir.path }}/cfn_r53.yml"
+        template_parameters:
+          TeamName: "{{ r53_team }}"
+        tags:
+          Name: "{{ r53_stack_name }}"
+          team: "{{ r53_team }}"
+          environment: "{{ r53_environment }}"
+      register: r53_cfn_result
+
+    - name: Display Cloudformation Output
+      debug:
+        msg: "{{ r53_cfn_result }}"
+
+  always:
+    - name: Cleanup Temporary Template Folder
+      file:
+        path: "{{ template_temp_dir.path }}"
+        state: absent
+      changed_when: false

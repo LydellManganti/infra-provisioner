@@ -19,6 +19,7 @@ Run `make` at the base folder. This will display Makefile targets that can be ex
 
 ### TESTING
 `make check-syntax` - This will run a syntax check across Ansible playbooks/roles.
+
 `make lint` - This will run ansible-lint across Ansible playbooks/roles.
 
 ### DEPLOYMENTS
@@ -45,6 +46,7 @@ The below tools are used for this project
 - Use Cloudformation to deploy/update stacks.
 - Use virtualenv to isolate project dependencies.
 - Ansible code best practice by using ansible-lint.
+- Ansible custom module using boto3
 
 # Design Decisions
 - VPC S3 Endpoint - allow S3 access within aws network.
@@ -55,3 +57,4 @@ The below tools are used for this project
 - VPC Flowlogs - audit inbound/outbound traffic to vpc.
 - S3 Accesslogs - audit S3 requests made to the bucket.
 - SecurityGroup - enable least privilege to resources.
+- RDS MultiAZ - allow failover

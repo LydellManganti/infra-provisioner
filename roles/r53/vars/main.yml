@@ -1,0 +1,4 @@
+---
+r53_environment: dev
+r53_stack_name: infra-poc
+r53_team: network
