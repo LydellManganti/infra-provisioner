@@ -1,84 +1,52 @@
 # Project Infrastructure Provisioner
-This project provisions an AWS infrastructure that accepts traffic from the internet (which are whitelisted), routes to an Application Load Balancer, which is attached to an AutoScalingGroup.
-The EC2 instance will hold the service that has permission to get and put object to an S3 Bucket. The EC2 instance will have permission to read and push data to RDS PostgreSQL.
+
+This project provisions an AWS infrastructure that accepts traffic from the internet (which are whitelisted), routes to an Application Load Balancer and to an EC2 instance.
+
+The EC2 instance will hold the service which has permissions to get and put objects to an S3 Bucket. The EC2 instance will also have permission to read and push data to RDS PostgreSQL.
+
+## Pre-requisites
+- `make` and `python` are installed.
+- aws credentials and config are setup
 
 # Quick Start
+
 Run `make` at the base folder. This will display Makefile targets that can be executed.
 
+### DEVELOPMENT
+`make virtual-env` - This will create a virtual environment `venv` and install python modules required by this project.
 
-# Machine Setup
-## Tools
-### Python 2.7
-### VirtualEnv
-- Ansible
-- Boto3
-- BotoCore
-### Makefile
+### TESTING
+`make check-syntax` - This will run a syntax check acrooss Ansible playbooks/roles.
+`make lint` - This will run ansible-lint across Ansible playbooks/roles.
 
-## Domain Name
+### DEPLOYMENTS
+`make vpc` - Creates the VPC resource including Internet Gateway, Subnets, RouteTables, Network ACL.
+`make s3` - Creates S3 Bucket needed by the Application.
+`make load-balancer` - Creates a Load balancer in front of the Web App.
+`make auto-scaling` - Creates Autoscaling group on 2 Availability Zones.
+`make rds-postgresql` - Creates an RDS PostgreSQL with option for Multi AZ.
+`make all` - Creates all the resources in order of dependency.
 
-# Resources
-R53
-  - RecordSet
+# Tools Used
+The below tools are used for this project
+- Ansible - Used to orchestrate resource deployment.
+- Python - Used to create Ansible custom module, eg. `cloudformation_validate` that is not available out of the box.
+- make - Used to simplify Ansible tasks into single command.
+- Cloudformation - Used to create resources in aws. This allow drift detection and depedency of resources.
 
-VPC
-  - Internet Gateway
-  - S3 Endpoint
-  - Public Subnet for Application
-  - Private Subnet for RDS to block external access
-  - Route Table
-
-LoadBalancer
-  - ApplicationLoadBalancer
-  - TargetGroups
-
-EC2
-  - AutoScalingGroup
-  - EC2 Instance
-  - IAM Role for Instance Profile
-
-RDS
-  - PostgreSQL
+# Features
+- Creates EC2 KeyPair automatically and store in SSM Parameter Store.
+- Use SSM Parameter Store for Secrets (DB Password).
+- Use Cloudformation to deploy/update stacks.
+- Use virtualenv to isolate project dependencies.
+- Ansible code best practice by using ansible-lint.
 
 # Design Decisions
-- S3 Endpoint
-- Public/Private Subnets
-- VPC Flowlogs
-- S3 AccessLogs
-- S3 Encryption
-- RDS Encryption
-- SecurityGroup - Least privilege
-- Cloudwatch
-- CloudTrail
-- R53
-
-# Makefile
-## make virtual-env
-## make check-syntax
-## make lint
-## make vpc
-## make load-balancer
-## make auto-scaling
-## make provision-s3
-## make provision-rds
-## make provision-r53
-
-# Design Decisions
-Route 53 - This service is chosen to allow traffic
-
-# High Availability Design
-- R53
-- AppliationLoadBalancer
-- AutoScalingGroup
-- RDS
-
-# Security Decisions Implemented as part of automation
-- CloudTrail
-- Network ACL for Subnets
-- RDS Encryption
-- S3 Encryption using AES 256
-- Security Groups
-- VPC AccessLogs
-
-# Security Not part of Automation due to dependency with AWS
-- Certificate TLS security
+- VPC S3 Endpoint - allow S3 access within aws network.
+- Public Subnets - Allow internet traffic to Web Application.
+- Private Subnet - Restrict DB Access to the Web Application only, and block external access.
+- AutoScalingGroup - enable high availability on Web Application.
+- S3 Encryption - encrypt objects at rest.
+- VPC Flowlogs - audit inbound/outbound traffic to vpc.
+- S3 Accesslogs - audit S3 requests made to the bucket.
+- SecurityGroup - enable least privilege to resources.
