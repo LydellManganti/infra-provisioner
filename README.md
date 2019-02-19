@@ -12,7 +12,6 @@ The EC2 instance will hold the service which has permissions to get and put obje
 
 Run `make` at the base folder. This will display Makefile targets that can be executed.
 
-Inline-style:
 ![alt text](https://github.com/LydellManganti/infra-provisioner/raw/master/assets/makefile.jpg)
 
 ### DEVELOPMENT
