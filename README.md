@@ -12,6 +12,9 @@ The EC2 instance will hold the service which has permissions to get and put obje
 
 Run `make` at the base folder. This will display Makefile targets that can be executed.
 
+Inline-style:
+![alt text](https://github.com/LydellManganti/infra-provisioner/raw/master/assets/makefile.jpg)
+
 ### DEVELOPMENT
 `make virtual-env` - This will create a virtual environment `venv` and install python modules required by this project.
 
@@ -27,6 +30,7 @@ Run `make` at the base folder. This will display Makefile targets that can be ex
 |`make load-balancer` | Creates a Load balancer in front of the Web App.                                       |
 |`make auto-scaling`  | Creates Autoscaling group on 2 Availability Zones.                                     |
 |`make rds-postgresql`| Creates an RDS PostgreSQL with option for Multi AZ.                                    |
+|`make r53`           | Creates an alias for the load-balancer                                                 |
 |`make all`           | Creates all the resources in order of dependency.                                      |
 
 # Tools Used

@@ -25,6 +25,7 @@ usage:
 	@printf "$(YELLOW)make load-balancer  $(GREEN)# Provision Application LoadBalancer $(NC)\n"
 	@printf "$(YELLOW)make auto-scaling   $(GREEN)# Provision AutoScalingGroup $(NC)\n"
 	@printf "$(YELLOW)make rds-postgresql $(GREEN)# Provision RDS PostgresQL $(NC)\n"
+	@printf "$(YELLOW)make r53            $(GREEN)# Create R53 alias to Load Balancer $(NC)\n"
 	@printf "$(YELLOW)make all            $(GREEN)# Provision all Resources\n"
 	@printf "\n\n"
 
