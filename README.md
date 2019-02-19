@@ -58,3 +58,7 @@ The below tools are used for this project
 - S3 Accesslogs - audit S3 requests made to the bucket.
 - SecurityGroup - enable least privilege to resources.
 - RDS MultiAZ - allow failover
+
+## To Do List
+- Add dependency check for `make` targets.
+- Ability to rerun stack on a failed state.

@@ -1,0 +1,21 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Provision R53 RecordSet
+
+Parameters:
+  TeamName:
+    Description: The Team who owns this stack
+    Type: String
+
+Resources:
+  R53DNS:
+    Type: AWS::R53::RecordSetGroup
+    Properties:
+      HostedZoneName: "{{ r53_hosted_zone_name }}"
+      Comment: Hosted Zone "{{ r53_hosted_zone_name }}"
+      RecordSets:
+        - Name: "{{ common_domain_name }}"
+          Type: A
+          AliasTarget:
+            HostedZoneId: !ImportValue "operations-canonical-host-zone-name-id"
+            DNSName: !ImportValue "operations-load-balancer-dns-name"

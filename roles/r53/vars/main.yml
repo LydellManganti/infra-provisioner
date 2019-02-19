@@ -1,4 +1,5 @@
 ---
 r53_environment: dev
+r53_hosted_zone_name: lydell.net.
 r53_stack_name: infra-poc
 r53_team: network
