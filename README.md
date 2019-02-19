@@ -16,23 +16,25 @@ Run `make` at the base folder. This will display Makefile targets that can be ex
 `make virtual-env` - This will create a virtual environment `venv` and install python modules required by this project.
 
 ### TESTING
-`make check-syntax` - This will run a syntax check acrooss Ansible playbooks/roles.
+`make check-syntax` - This will run a syntax check across Ansible playbooks/roles.
 `make lint` - This will run ansible-lint across Ansible playbooks/roles.
 
 ### DEPLOYMENTS
-`make vpc` - Creates the VPC resource including Internet Gateway, Subnets, RouteTables, Network ACL.
-`make s3` - Creates S3 Bucket needed by the Application.
-`make load-balancer` - Creates a Load balancer in front of the Web App.
-`make auto-scaling` - Creates Autoscaling group on 2 Availability Zones.
-`make rds-postgresql` - Creates an RDS PostgreSQL with option for Multi AZ.
-`make all` - Creates all the resources in order of dependency.
+|Command              | Description                                                                            |
+| --------------------|:--------------------------------------------------------------------------------------:|
+|`make vpc`           | Creates the VPC resource including Internet Gateway, Subnets, RouteTables, Network ACL.|
+|`make s3`            | Creates S3 Bucket needed by the Application.                                           |
+|`make load-balancer` | Creates a Load balancer in front of the Web App.                                       |
+|`make auto-scaling`  | Creates Autoscaling group on 2 Availability Zones.                                     |
+|`make rds-postgresql`| Creates an RDS PostgreSQL with option for Multi AZ.                                    |
+|`make all`           | Creates all the resources in order of dependency.                                      |
 
 # Tools Used
 The below tools are used for this project
 - Ansible - Used to orchestrate resource deployment.
 - Python - Used to create Ansible custom module, eg. `cloudformation_validate` that is not available out of the box.
 - make - Used to simplify Ansible tasks into single command.
-- Cloudformation - Used to create resources in aws. This allow drift detection and depedency of resources.
+- Cloudformation - Used to create resources in aws. This allow drift detection and dependency of resources.
 
 # Features
 - Creates EC2 KeyPair automatically and store in SSM Parameter Store.
